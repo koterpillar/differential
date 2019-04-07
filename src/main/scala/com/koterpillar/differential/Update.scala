@@ -1,9 +1,13 @@
 package com.koterpillar.differential
 
-trait Update[Original, -Patch] {
+trait Update[Original] {
+  type Patch
+
   def apply(original: Original, patch: Patch): Original
 }
 
 object Update {
-  def apply[Original, Patch](original: Original, patch: Patch)(implicit update: Update[Original, Patch]): Original = update(original, patch)
+  type Aux[Original, Patch0] = Update[Original] {type Patch = Patch0}
+
+  def apply[Original, Patch](original: Original, patch: Patch)(implicit update: Update[Original]): Original = update(original, patch)
 }
